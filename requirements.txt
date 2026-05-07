@@ -1,0 +1,15 @@
+# -------------------------------------------------------
+# SensoRAG - Python Dependencies
+# -------------------------------------------------------
+# flask:         lightweight web framework for serving the app
+# pdfplumber:    extracts text content from uploaded PDF datasheets
+# chromadb:      vector database with built-in FastEmbed support
+#                (installs fastembed + onnxruntime automatically)
+# anthropic:     Claude API client for generating natural-language answers
+# python-dotenv: loads environment variables from .env file (API keys)
+# -------------------------------------------------------
+flask
+pdfplumber
+chromadb
+anthropic
+python-dotenv

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SensoRAG - Sensor Datasheet Search</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div class="container" id="main-app">
+
+        <header>
+            <h1>SensoRAG | RAG-based Transducer Selection</h1>
+            <p class="subtitle">Upload sensors/actuators data sheets (max. 16MB), then query with a use case.</p>
+        </header>
+
+        <!-- API Key Section -->
+        <section class="card">
+            <h2>API Key (Optional)</h2>
+            <p class="hint">Enter your Anthropic API key for AI-generated answers. Without a key, you'll see raw retrieval matches. Your key is stored in your browser only and sent per-request — never saved on the server.</p>
+            <div class="api-key-area">
+                <input type="password" id="api-key-input" placeholder="sk-ant-...">
+                <button id="api-key-toggle" class="btn btn-small">Show</button>
+            </div>
+        </section>
+
+        <section class="card">
+            <h2>1. Upload Datasheets</h2>
+            <div class="upload-area">
+                <input type="file" id="file-input" accept=".pdf,.txt,.csv,.tsv" multiple>
+                <button id="upload-btn" class="btn">Upload</button>
+                <button id="preload-btn" class="btn btn-preload-inline">Load Sample Datasheets</button>
+            </div>
+            <div id="upload-status"></div>
+            <div id="document-list"></div>
+        </section>
+
+        <section class="card">
+            <h2>2. Search Sensors</h2>
+            <div class="query-area">
+                <input type="text" id="query-input" placeholder="e.g. Show me which sensors are best for a line following robot">
+                <button id="query-btn" class="btn">Search</button>
+            </div>
+        </section>
+
+        <section class="card" id="results-section" style="display:none;">
+            <h2>3. Results</h2>
+            <div id="answer-box"></div>
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Source File</th>
+                        <th>Relevance</th>
+                        <th>Matching Content</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body"></tbody>
+            </table>
+        </section>
+
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
