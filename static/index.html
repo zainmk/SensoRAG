@@ -11,19 +11,26 @@
     <div class="container" id="main-app">
 
         <header>
-            <h1>SensoRAG | RAG-based Transducer Selection</h1>
-            <p class="subtitle">Upload sensors/actuators data sheets (max. 16MB), then query with a use case.</p>
-        </header>
-
-        <!-- API Key Section -->
-        <section class="card">
-            <h2>API Key (Optional)</h2>
-            <p class="hint">Enter your Anthropic API key for AI-generated answers. Without a key, you'll see raw retrieval matches. Your key is stored in your browser only and sent per-request — never saved on the server.</p>
-            <div class="api-key-area">
-                <input type="password" id="api-key-input" placeholder="sk-ant-...">
-                <button id="api-key-toggle" class="btn btn-small">Show</button>
+            <div class="header-row">
+                <div>
+                    <h1>SensoRAG | RAG-based Transducer Selection</h1>
+                    <p class="subtitle">Upload sensors/actuators data sheets (max. 16MB), then query with a use case.</p>
+                </div>
+                <button id="api-key-trigger" class="api-key-trigger" title="Set API Key">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    <span>API Key</span>
+                </button>
             </div>
-        </section>
+
+            <!-- API Key Popover -->
+            <div id="api-key-popover" class="api-key-popover hidden">
+                <p class="hint">Anthropic API key for AI answers. Without one, you'll see raw matches. Stored in your browser only.</p>
+                <div class="api-key-area">
+                    <input type="password" id="api-key-input" placeholder="sk-ant-...">
+                    <button id="api-key-toggle" class="btn btn-small">Show</button>
+                </div>
+            </div>
+        </header>
 
         <section class="card">
             <h2>1. Upload Datasheets</h2>

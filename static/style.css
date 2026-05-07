@@ -3,9 +3,18 @@ body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; background
 
 .container { max-width: 880px; margin: 0 auto; }
 
-header { text-align: center; margin-bottom: 2rem; }
+header { margin-bottom: 2rem; position: relative; }
+.header-row { display: flex; justify-content: space-between; align-items: flex-start; text-align: center; }
+.header-row > div { flex: 1; }
 header h1 { font-size: 2.2rem; color: #60a5fa; letter-spacing: -0.5px; }
 .subtitle { color: #94a3b8; margin-top: 0.3rem; font-size: 0.95rem; }
+
+.api-key-trigger { display: flex; align-items: center; gap: 0.35rem; background: #1a1d2e; border: 1px solid #2a2d3e; color: #64748b; padding: 0.35rem 0.7rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem; white-space: nowrap; transition: color 0.2s, border-color 0.2s; flex-shrink: 0; margin-top: 0.3rem; }
+.api-key-trigger:hover { color: #94a3b8; border-color: #3b82f6; }
+.api-key-trigger.has-key { color: #4ade80; border-color: #2a4a3e; }
+
+.api-key-popover { position: absolute; right: 0; top: 100%; margin-top: 0.5rem; background: #1a1d2e; border: 1px solid #2a2d3e; border-radius: 10px; padding: 1rem; width: 340px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 100; }
+.api-key-popover.hidden { display: none; }
 
 .card { background: #1a1d2e; border-radius: 10px; padding: 1.5rem; margin-bottom: 1.25rem; box-shadow: 0 1px 4px rgba(0,0,0,0.3); border: 1px solid #2a2d3e; }
 .card h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #cbd5e1; }

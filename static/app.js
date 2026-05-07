@@ -19,30 +19,41 @@ const resultsBody    = document.getElementById('results-body');
 const preloadBtn     = document.getElementById('preload-btn');
 const apiKeyInput    = document.getElementById('api-key-input');
 const apiKeyToggle   = document.getElementById('api-key-toggle');
+const apiKeyTrigger  = document.getElementById('api-key-trigger');
+const apiKeyPopover  = document.getElementById('api-key-popover');
 
 // -------------------------------------------------------
 // API Key Management
 // -------------------------------------------------------
-// Store the user's API key in localStorage so they don't
-// have to re-enter it on every page load. The key is sent
-// via the X-API-Key header on each /query request — the
-// server uses it for that single Claude call and never
-// persists it.
-// -------------------------------------------------------
 
-// load saved key on page load (if any)
 apiKeyInput.value = localStorage.getItem('anthropic_api_key') || '';
 
-// save key to localStorage whenever it changes
+function updateTriggerState() {
+    apiKeyTrigger.classList.toggle('has-key', !!apiKeyInput.value.trim());
+}
+updateTriggerState();
+
 apiKeyInput.addEventListener('input', () => {
     localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+    updateTriggerState();
 });
 
-// toggle visibility of the API key field
 apiKeyToggle.addEventListener('click', () => {
     const isPassword = apiKeyInput.type === 'password';
     apiKeyInput.type = isPassword ? 'text' : 'password';
     apiKeyToggle.textContent = isPassword ? 'Hide' : 'Show';
+});
+
+apiKeyTrigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    apiKeyPopover.classList.toggle('hidden');
+    if (!apiKeyPopover.classList.contains('hidden')) apiKeyInput.focus();
+});
+
+document.addEventListener('click', (e) => {
+    if (!apiKeyPopover.contains(e.target) && e.target !== apiKeyTrigger) {
+        apiKeyPopover.classList.add('hidden');
+    }
 });
 
 // helper: build headers for /query requests, including the API key if set
