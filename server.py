@@ -1,30 +1,7 @@
-# -------------------------------------------------------
-# SensoRAG - Flask Web Server
-# -------------------------------------------------------
-# Serves the frontend and exposes API endpoints:
-#   POST /upload            - accept and ingest a sensor datasheet file
-#   POST /query             - run a RAG query against ingested documents
-#   GET  /documents         - list all currently indexed documents
-#   DELETE /documents/:name - remove a single document
-#   POST /preload           - load sample datasheets
-#   POST /clear             - remove all documents
-#
-# API key handling:
-#   The /query endpoint accepts an optional API key from the frontend
-#   via the X-API-Key header. This lets users bring their own Anthropic
-#   key so the app operator doesn't pay for API calls. If no key is
-#   provided, falls back to the server's ANTHROPIC_API_KEY env var.
-# -------------------------------------------------------
-
 import os
 import shutil
 
-# load .env file before anything else (sets ANTHROPIC_API_KEY etc.)
-from dotenv import load_dotenv
-load_dotenv()
-
 from flask import Flask, request, jsonify
-# secure_filename: sanitizes uploaded filenames to prevent path traversal
 from werkzeug.utils import secure_filename
 
 from rag_engine import RAGEngine
@@ -39,37 +16,23 @@ CHROMA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chroma_db
 ALLOWED_EXTENSIONS = {'pdf', 'txt', 'csv', 'tsv'}
 MAX_FILE_SIZE = 16 * 1024 * 1024  # 16 MB
 
-# -------------------------------------------------------
-# App Initialization
-# -------------------------------------------------------
 app = Flask(__name__, static_folder='static')
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
-# single RAG engine instance shared across all requests
 rag = RAGEngine(upload_dir=UPLOAD_DIR, persist_dir=CHROMA_DIR)
 
 
-def allowed_file(filename):
-    """Check if a filename has an allowed extension (pdf, txt, csv, tsv)."""
+def allowed_file(filename): # restrict file types
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# -------------------------------------------------------
-# Routes
-# -------------------------------------------------------
-
 @app.route('/')
-def index():
-    """Serve the main single-page frontend."""
+def index(): 
     return app.send_static_file('index.html')
 
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    """
-    Handle file upload: validate, save to disk, and ingest into RAG index.
-    Returns JSON with success message and updated document list.
-    """
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
     file = request.files['file']
@@ -82,7 +45,7 @@ def upload():
     filepath = os.path.join(UPLOAD_DIR, filename)
     file.save(filepath)
 
-    success = rag.ingest_document(filepath, filename)
+    success = rag.ingest(filepath, filename)
     if success:
         return jsonify({'message': f'Indexed: {filename}', 'documents': rag.get_document_list()})
     return jsonify({'error': 'Could not extract text from file'}), 400
@@ -90,13 +53,6 @@ def upload():
 
 @app.route('/query', methods=['POST'])
 def query():
-    """
-    Handle a RAG query: retrieve relevant chunks, generate an answer.
-
-    Accepts an optional X-API-Key header from the frontend. If present,
-    that key is used for the Claude API call instead of the server's
-    env var. This is the "bring your own key" pattern.
-    """
     data = request.get_json()
     if not data or 'query' not in data:
         return jsonify({'error': 'No query provided'}), 400

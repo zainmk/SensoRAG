@@ -3,71 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SensoRAG - Sensor Datasheet Search</title>
+    <title>SensoRAG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+<div class="page-wrap">
 
-    <div class="container" id="main-app">
-
-        <header>
-            <div class="header-row">
-                <div>
-                    <h1>SensoRAG | RAG-based Transducer Selection</h1>
-                    <p class="subtitle">Upload sensors/actuators data sheets (max. 16MB), then query with a use case.</p>
+    <!-- ═══════════════════ HEADER ═══════════════════ -->
+    <header class="site-header">
+        <div class="hdr-inner">
+            <div class="hdr-left">
+                <div class="hdr-eyebrow">RAG // SYSTEM · v1.0</div>
+                <h1 class="hdr-title">SENSO<em>RAG</em></h1>
+                <p class="hdr-sub">RAG-BASED TRANSDUCER SELECTION ENGINE</p>
+            </div>
+            <div class="hdr-right">
+                <div class="hdr-stat">
+                    <span class="stat-label">ENGINE</span>
+                    <span class="stat-val">CHROMADB</span>
                 </div>
-                <button id="api-key-trigger" class="api-key-trigger" title="Set API Key">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
-                    <span>API Key</span>
+                <div class="hdr-stat">
+                    <span class="stat-label">EMBED</span>
+                    <span class="stat-val">FASTEMBED</span>
+                </div>
+                <button id="api-key-trigger" class="api-btn" title="Set API Key">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                    API KEY
                 </button>
             </div>
+        </div>
+        <div class="hdr-yellow-bar"></div>
 
-            <!-- API Key Popover -->
-            <div id="api-key-popover" class="api-key-popover hidden">
-                <p class="hint">Anthropic API key for AI answers. Without one, you'll see raw matches. Stored in your browser only.</p>
-                <div class="api-key-area">
-                    <input type="password" id="api-key-input" placeholder="sk-ant-...">
-                    <button id="api-key-toggle" class="btn btn-small">Show</button>
+        <div id="api-key-popover" class="api-key-popover hidden">
+            <p class="hint">ANTHROPIC API KEY</p>
+            <div class="api-key-area">
+                <input type="password" id="api-key-input" placeholder="sk-ant-...">
+                <button id="api-key-toggle" class="btn btn-small">SHOW</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════ PANELS ═══════════════════ -->
+    <main class="panels">
+
+        <!-- Panel 01: Upload -->
+        <section class="panel">
+            <div class="panel-bar">
+                <span class="pbar-num">01</span>
+                <span class="pbar-name">UPLOAD // DATASHEETS</span>
+                <span class="pbar-right">PDF · TXT · CSV · TSV · MAX 16 MB</span>
+            </div>
+            <div class="panel-body">
+                <div class="panel-hero">
+                    <h2 class="panel-display">Upload<br>Datasheets</h2>
+                    <div class="dot-grid"></div>
+                </div>
+                <div class="upload-area">
+                    <label class="file-pick">
+                        <input type="file" id="file-input" accept=".pdf,.txt,.csv,.tsv" multiple>
+                        <span class="file-pick-label" id="file-pick-label">SELECT FILES</span>
+                    </label>
+                    <button id="upload-btn" class="btn btn-yellow">UPLOAD</button>
+                    <button id="preload-btn" class="btn btn-outline">LOAD SAMPLES</button>
+                </div>
+                <div id="upload-status"></div>
+                <div id="document-list"></div>
+            </div>
+        </section>
+
+        <!-- Panel 02: Query -->
+        <section class="panel">
+            <div class="panel-bar">
+                <span class="pbar-num">02</span>
+                <span class="pbar-name">QUERY // SENSOR SEARCH</span>
+            </div>
+            <div class="panel-body">
+                <div class="panel-hero">
+                    <h2 class="panel-display">Search<br>Sensors</h2>
+                    <div class="dot-grid"></div>
+                </div>
+                <div class="query-area">
+                    <input type="text" id="query-input" placeholder="e.g. best sensor for a line-following robot">
+                    <button id="query-btn" class="btn btn-yellow">SEARCH</button>
                 </div>
             </div>
-        </header>
+        </section>
 
-        <section class="card">
-            <h2>1. Upload Datasheets</h2>
-            <div class="upload-area">
-                <input type="file" id="file-input" accept=".pdf,.txt,.csv,.tsv" multiple>
-                <button id="upload-btn" class="btn">Upload</button>
-                <button id="preload-btn" class="btn btn-preload-inline">Load Sample Datasheets</button>
+        <!-- Panel 03: Results -->
+        <section class="panel" id="results-section" style="display:none;">
+            <div class="panel-bar">
+                <span class="pbar-num">03</span>
+                <span class="pbar-name">RESULTS // RETRIEVAL OUTPUT</span>
             </div>
-            <div id="upload-status"></div>
-            <div id="document-list"></div>
-        </section>
-
-        <section class="card">
-            <h2>2. Search Sensors</h2>
-            <div class="query-area">
-                <input type="text" id="query-input" placeholder="e.g. Show me which sensors are best for a line following robot">
-                <button id="query-btn" class="btn">Search</button>
+            <div class="panel-body">
+                <div class="panel-hero">
+                    <h2 class="panel-display">Results</h2>
+                    <div class="dot-grid"></div>
+                </div>
+                <div id="answer-box"></div>
+                <table id="results-table">
+                    <thead>
+                        <tr>
+                            <th>SOURCE</th>
+                            <th>SCORE</th>
+                            <th>CONTENT EXCERPT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body"></tbody>
+                </table>
             </div>
         </section>
 
-        <section class="card" id="results-section" style="display:none;">
-            <h2>3. Results</h2>
-            <div id="answer-box"></div>
-            <table id="results-table">
-                <thead>
-                    <tr>
-                        <th>Source File</th>
-                        <th>Relevance</th>
-                        <th>Matching Content</th>
-                    </tr>
-                </thead>
-                <tbody id="results-body"></tbody>
-            </table>
-        </section>
+    </main>
 
-    </div>
+    <!-- ═══════════════════ FOOTER ═══════════════════ -->
+    <footer class="site-footer">
+        <span>SENSORAG // RAG-BASED TRANSDUCER SELECTION ENGINE</span>
+        <span>MAX 16 MB · PDF · TXT · CSV · TSV</span>
+    </footer>
 
-    <script src="/static/app.js"></script>
+</div>
+
+<script src="/static/app.js"></script>
+<script>
+    document.getElementById('file-input').addEventListener('change', function () {
+        const lbl = document.getElementById('file-pick-label');
+        lbl.textContent = this.files.length
+            ? this.files.length + ' FILE' + (this.files.length > 1 ? 'S' : '') + ' SELECTED'
+            : 'SELECT FILES';
+    });
+</script>
 </body>
 </html>

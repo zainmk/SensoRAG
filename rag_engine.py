@@ -8,30 +8,10 @@
 #   4. Retrieves top-k relevant chunks via semantic similarity
 #   5. Generates a natural-language answer via Claude API
 #
-# Why FastEmbed over sentence-transformers?
-#   - FastEmbed uses ONNX Runtime (~50MB) instead of PyTorch (~2GB)
-#   - Same model quality, ~20x smaller deployment footprint
-#   - Fits comfortably on Render's cheapest tier (~250-350MB total RAM)
-#
-# Why ChromaDB over raw FAISS?
-#   - ChromaDB wraps FAISS-like vector search with built-in:
-#     document storage, metadata filtering, and persistence (SQLite-backed)
-#   - Has native FastEmbed integration — handles embedding automatically
-#   - One less thing to wire up vs managing FAISS indices manually
-#
-# Why not TF-IDF (the previous approach)?
-#   - TF-IDF only matches on keyword overlap (sparse bag-of-words)
-#   - Can't handle synonyms, abbreviations, or conceptual queries
-#   - e.g. "sensors for a line following robot" would miss an IR sensor
-#     datasheet that says "optical reflectance detection"
-#   - Dense embeddings understand semantic meaning, so conceptually
-#     related documents are retrieved even without shared keywords
 # -------------------------------------------------------
 
 import os
 from pathlib import Path
-
-# pdfplumber: robust PDF text extraction (handles tables, columns, etc.)
 import pdfplumber
 
 # chromadb: vector database with built-in FastEmbed support
@@ -80,11 +60,6 @@ class RAGEngine:
     # ----- text extraction -----
 
     def extract_text_from_pdf(self, filepath):
-        """
-        Extract all readable text from a PDF file using pdfplumber.
-        Iterates page-by-page and concatenates extracted text.
-        Returns empty string if PDF has no extractable text (e.g. scanned images).
-        """
         text = ""
         with pdfplumber.open(filepath) as pdf:
             for page in pdf.pages:
@@ -133,7 +108,7 @@ class RAGEngine:
 
     # ----- document ingestion -----
 
-    def ingest_document(self, filepath, filename):
+    def ingest(self, filepath, filename):
         """
         Full document ingestion pipeline:
         1. Extract raw text from the file

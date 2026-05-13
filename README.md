@@ -126,3 +126,8 @@ SensoRAG/
   uploads/           # User-uploaded datasheets (created at runtime)
   chroma_db/         # ChromaDB persistent storage (created at runtime)
 ```
+
+
+
+##### refs
+UI DESIGN [https://dribbble.com/shots/26816864-Nova-1-Identity]
