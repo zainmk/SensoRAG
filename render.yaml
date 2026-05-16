@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: sensorag
-    runtime: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: python server.py
-    envVars:
-      - key: ANTHROPIC_API_KEY
-        sync: false        # set manually in Render dashboard
