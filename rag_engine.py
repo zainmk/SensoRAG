@@ -7,13 +7,12 @@ import pdfplumber
 
 class RAGEngine:
     def __init__(self):
-        self.documents = []
         self.chroma_client = chromadb.EphemeralClient()
         self.collection = self.chroma_client.get_or_create_collection(
             name="sensor_chunks",
             metadata={"hnsw:space": "cosine"}
         )
-        self._id_counter = self.collection.count()
+        self._id_counter = 0
 
     def extract_text(self, file_bytes, filename):
         ext = Path(filename).suffix.lower()
@@ -46,7 +45,6 @@ class RAGEngine:
         chunks = self.chunk_text(text)
         if not chunks:
             return False
-        self.documents.append({'filename': filename, 'chunk_count': len(chunks)})
         ids = [f"chunk_{self._id_counter + i}" for i in range(len(chunks))]
         self._id_counter += len(chunks)
         self.collection.add(
@@ -99,15 +97,3 @@ class RAGEngine:
                 ),
                 'sources': results
             }
-
-    def clear_all(self):
-        self.chroma_client.delete_collection("sensor_chunks")
-        self.collection = self.chroma_client.get_or_create_collection(
-            name="sensor_chunks",
-            metadata={"hnsw:space": "cosine"}
-        )
-        self.documents = []
-        self._id_counter = 0
-
-    def get_document_list(self):
-        return [{'filename': d['filename'], 'chunks': d['chunk_count']} for d in self.documents]

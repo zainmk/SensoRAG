@@ -282,6 +282,21 @@ body {
     color: var(--black);
 }
 
+.samples-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.65rem 0.9rem;
+    border: var(--border);
+    font-family: var(--font-condensed);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+}
+
 /* ================================================================
    QUERY
 ================================================================ */

@@ -49,53 +49,39 @@
     <!-- ═══════════════════ PANELS ═══════════════════ -->
     <main class="panels">
 
-        <!-- Panel 01: Upload -->
+        <!-- Panel 01: Search -->
         <section class="panel">
             <div class="panel-bar">
                 <span class="pbar-num">01</span>
-                <span class="pbar-name">UPLOAD // DATASHEETS</span>
+                <span class="pbar-name">SEARCH // SENSOR DATASHEETS</span>
                 <span class="pbar-right">PDF · TXT · CSV · TSV · MAX 16 MB</span>
-            </div>
-            <div class="panel-body">
-                <div class="panel-hero">
-                    <h2 class="panel-display">Upload<br>Datasheets</h2>
-                    <div class="dot-grid"></div>
-                </div>
-                <div class="upload-area">
-                    <label class="file-pick">
-                        <input type="file" id="file-input" accept=".pdf,.txt,.csv,.tsv" multiple>
-                        <span class="file-pick-label" id="file-pick-label">SELECT FILES</span>
-                    </label>
-                    <button id="upload-btn" class="btn btn-yellow">UPLOAD</button>
-                    <button id="preload-btn" class="btn btn-outline">LOAD SAMPLES</button>
-                </div>
-                <div id="upload-status"></div>
-                <div id="document-list"></div>
-            </div>
-        </section>
-
-        <!-- Panel 02: Query -->
-        <section class="panel">
-            <div class="panel-bar">
-                <span class="pbar-num">02</span>
-                <span class="pbar-name">QUERY // SENSOR SEARCH</span>
             </div>
             <div class="panel-body">
                 <div class="panel-hero">
                     <h2 class="panel-display">Search<br>Sensors</h2>
                     <div class="dot-grid"></div>
                 </div>
+                <div class="upload-area">
+                    <label class="file-pick">
+                        <input type="file" id="file-input" accept=".pdf,.txt,.csv,.tsv" multiple>
+                        <span class="file-pick-label" id="file-pick-label">ATTACH FILES</span>
+                    </label>
+                    <label class="samples-label">
+                        <input type="checkbox" id="samples-check">
+                        LOAD SAMPLES
+                    </label>
+                </div>
                 <div class="query-area">
                     <input type="text" id="query-input" placeholder="e.g. best sensor for a line-following robot">
-                    <button id="query-btn" class="btn btn-yellow">SEARCH</button>
+                    <button id="search-btn" class="btn btn-yellow">SEARCH</button>
                 </div>
             </div>
         </section>
 
-        <!-- Panel 03: Results -->
+        <!-- Panel 02: Results -->
         <section class="panel" id="results-section" style="display:none;">
             <div class="panel-bar">
-                <span class="pbar-num">03</span>
+                <span class="pbar-num">02</span>
                 <span class="pbar-name">RESULTS // RETRIEVAL OUTPUT</span>
             </div>
             <div class="panel-body">
@@ -132,8 +118,8 @@
     document.getElementById('file-input').addEventListener('change', function () {
         const lbl = document.getElementById('file-pick-label');
         lbl.textContent = this.files.length
-            ? this.files.length + ' FILE' + (this.files.length > 1 ? 'S' : '') + ' SELECTED'
-            : 'SELECT FILES';
+            ? this.files.length + ' FILE' + (this.files.length > 1 ? 'S' : '') + ' ATTACHED'
+            : 'ATTACH FILES';
     });
 </script>
 </body>
