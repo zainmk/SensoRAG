@@ -8,6 +8,7 @@ const answerBox      = document.getElementById('answer-box');
 const resultsSection = document.getElementById('results-section');
 const resultsTable   = document.getElementById('results-table');
 const resultsBody    = document.getElementById('results-body');
+const preloadBtn     = document.getElementById('preload-btn');
 const apiKeyInput    = document.getElementById('api-key-input');
 const apiKeyToggle   = document.getElementById('api-key-toggle');
 const apiKeyTrigger  = document.getElementById('api-key-trigger');
@@ -55,6 +56,28 @@ function getQueryHeaders() {
     if (key) headers['X-API-Key'] = key;
     return headers;
 }
+
+// -------------------------------------------------------
+// Load Samples
+// -------------------------------------------------------
+
+preloadBtn.addEventListener('click', async () => {
+    preloadBtn.disabled = true;
+    uploadStatus.textContent = 'Loading sample datasheets...';
+    try {
+        const res = await fetch('/preload', { method: 'POST' });
+        const data = await res.json();
+        if (res.ok) {
+            uploadStatus.innerHTML = '<span class="success">' + data.message + '</span>';
+            renderDocumentList(data.documents);
+        } else {
+            uploadStatus.innerHTML = '<span class="error">' + (data.error || 'Failed to load samples.') + '</span>';
+        }
+    } catch (err) {
+        uploadStatus.innerHTML = '<span class="error">Could not reach server: ' + err.message + '</span>';
+    }
+    preloadBtn.disabled = false;
+});
 
 // -------------------------------------------------------
 // Upload Handler

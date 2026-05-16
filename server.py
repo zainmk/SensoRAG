@@ -62,18 +62,24 @@ def documents():
 
 
 
-def load_samples():
-    if not os.path.isdir(SAMPLES_DIR) or rag.collection.count() > 0:
-        return
+@app.route('/preload', methods=['POST'])
+def preload():
+    if not os.path.isdir(SAMPLES_DIR):
+        return jsonify({'error': 'No sample datasheets found'}), 404
+    already_indexed = {d['filename'] for d in rag.get_document_list()}
+    loaded = []
     for fname in os.listdir(SAMPLES_DIR):
         fpath = os.path.join(SAMPLES_DIR, fname)
-        if os.path.isfile(fpath) and allowed_file(fname):
+        if os.path.isfile(fpath) and allowed_file(fname) and fname not in already_indexed:
             with open(fpath, 'rb') as f:
-                rag.ingest(f.read(), fname)
-    print(f"[sensoRAG] Loaded {len(rag.documents)} sample datasheet(s)")
+                if rag.ingest(f.read(), fname):
+                    loaded.append(fname)
+    return jsonify({
+        'message': f'Loaded {len(loaded)} sample datasheet(s)',
+        'documents': rag.get_document_list()
+    })
 
 
 if __name__ == '__main__':
-    load_samples()
     print("[sensoRAG] Starting server at http://localhost:5000")
     app.run(debug=True, port=5000)
