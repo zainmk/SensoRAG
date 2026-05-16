@@ -5,11 +5,5 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn server:app
     envVars:
-      - key: CHROMA_DIR
-        value: /data/chroma_db
       - key: ANTHROPIC_API_KEY
         sync: false        # set manually in Render dashboard
-    disk:
-      name: chroma-data
-      mountPath: /data
-      sizeGB: 1

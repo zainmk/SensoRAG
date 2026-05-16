@@ -6,14 +6,13 @@ from werkzeug.utils import secure_filename
 from rag_engine import RAGEngine
 
 SAMPLES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'samples')
-CHROMA_DIR = os.environ.get('CHROMA_DIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chroma_db'))
 ALLOWED_EXTENSIONS = {'pdf', 'txt', 'csv', 'tsv'}
 MAX_FILE_SIZE = 16 * 1024 * 1024  # 16 MB
 
 app = Flask(__name__, static_folder='static')
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
 
-rag = RAGEngine(persist_dir=CHROMA_DIR)
+rag = RAGEngine()
 
 
 def allowed_file(filename):

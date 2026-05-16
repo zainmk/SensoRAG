@@ -6,9 +6,9 @@ import pdfplumber
 
 
 class RAGEngine:
-    def __init__(self, persist_dir='chroma_db'):
+    def __init__(self):
         self.documents = []
-        self.chroma_client = chromadb.PersistentClient(path=persist_dir)
+        self.chroma_client = chromadb.EphemeralClient()
         self.collection = self.chroma_client.get_or_create_collection(
             name="sensor_chunks",
             metadata={"hnsw:space": "cosine"}
