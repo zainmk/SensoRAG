@@ -1,15 +1,22 @@
-const fileInput      = document.getElementById('file-input');
-const samplesCheck   = document.getElementById('samples-check');
-const searchBtn      = document.getElementById('search-btn');
-const queryInput     = document.getElementById('query-input');
-const answerBox      = document.getElementById('answer-box');
-const resultsSection = document.getElementById('results-section');
-const resultsTable   = document.getElementById('results-table');
-const resultsBody    = document.getElementById('results-body');
-const apiKeyInput    = document.getElementById('api-key-input');
-const apiKeyToggle   = document.getElementById('api-key-toggle');
-const apiKeyTrigger  = document.getElementById('api-key-trigger');
-const apiKeyPopover  = document.getElementById('api-key-popover');
+const fileInput          = document.getElementById('file-input');
+const samplesCheck       = document.getElementById('samples-check');
+const searchBtn          = document.getElementById('search-btn');
+const queryInput         = document.getElementById('query-input');
+const resultsSection     = document.getElementById('results-section');
+const resultsLoading     = document.getElementById('results-loading');
+const resultsMessage     = document.getElementById('results-message');
+const topResult          = document.getElementById('top-result');
+const topSourceName      = document.getElementById('top-source-name');
+const topSourceScore     = document.getElementById('top-source-score');
+const recommendationText = document.getElementById('recommendation-text');
+const assumptionsSection = document.getElementById('assumptions-section');
+const assumptionsList    = document.getElementById('assumptions-list');
+const matchesSection     = document.getElementById('matches-section');
+const resultsBody        = document.getElementById('results-body');
+const apiKeyInput        = document.getElementById('api-key-input');
+const apiKeyToggle       = document.getElementById('api-key-toggle');
+const apiKeyTrigger      = document.getElementById('api-key-trigger');
+const apiKeyPopover      = document.getElementById('api-key-popover');
 
 // -------------------------------------------------------
 // API Key Management
@@ -46,6 +53,29 @@ document.addEventListener('click', (e) => {
 });
 
 // -------------------------------------------------------
+// State helpers
+// -------------------------------------------------------
+
+function showLoading() {
+    resultsSection.style.display = 'block';
+    resultsLoading.classList.remove('hidden');
+    resultsMessage.classList.add('hidden');
+    topResult.classList.add('hidden');
+    assumptionsSection.classList.add('hidden');
+    matchesSection.classList.add('hidden');
+}
+
+function showMessage(msg, isError) {
+    resultsLoading.classList.add('hidden');
+    resultsMessage.textContent = msg;
+    resultsMessage.className = 'results-message ' + (isError ? 'error' : 'muted');
+}
+
+function hideLoading() {
+    resultsLoading.classList.add('hidden');
+}
+
+// -------------------------------------------------------
 // Search Handler
 // -------------------------------------------------------
 
@@ -54,10 +84,7 @@ async function runSearch() {
     if (!query) return;
 
     searchBtn.disabled = true;
-    resultsSection.style.display = 'block';
-    answerBox.textContent = 'Searching...';
-    resultsBody.innerHTML = '';
-    resultsTable.style.display = 'none';
+    showLoading();
 
     const formData = new FormData();
     formData.append('query', query);
@@ -77,18 +104,21 @@ async function runSearch() {
         try {
             data = JSON.parse(text);
         } catch {
-            answerBox.innerHTML = '<span class="error">Server error ' + res.status + ' — ' + res.statusText + '</span>';
+            showMessage('Server error ' + res.status + ' — ' + res.statusText, true);
             searchBtn.disabled = false;
             return;
         }
-        if (res.ok) {
-            answerBox.textContent = data.answer || 'No answer generated.';
-            renderResults(data.sources || []);
-        } else {
-            answerBox.innerHTML = '<span class="error">' + (data.error || 'Search failed.') + '</span>';
+
+        if (!res.ok) {
+            showMessage(data.error || 'Search failed.', true);
+            searchBtn.disabled = false;
+            return;
         }
+
+        hideLoading();
+        renderResponse(data);
     } catch (err) {
-        answerBox.innerHTML = '<span class="error">Search failed: ' + err.message + '</span>';
+        showMessage('Search failed: ' + err.message, true);
     }
 
     searchBtn.disabled = false;
@@ -98,18 +128,43 @@ searchBtn.addEventListener('click', runSearch);
 queryInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') runSearch(); });
 
 // -------------------------------------------------------
-// Render Helpers
+// Render
 // -------------------------------------------------------
 
-function renderResults(sources) {
-    if (!sources.length) {
-        resultsTable.style.display = 'none';
+function renderResponse(data) {
+    // No results
+    if (!data.sources || !data.sources.length) {
+        showMessage(data.message || 'No results found.', false);
         return;
     }
-    resultsBody.innerHTML = sources.map(function(s) {
+
+    const top = data.sources[0];
+
+    // Best match card
+    topSourceName.textContent = top.source;
+    topSourceScore.textContent = (top.score * 100).toFixed(1) + '%';
+
+    if (data.recommendation) {
+        recommendationText.textContent = data.recommendation;
+    } else {
+        recommendationText.innerHTML =
+            '<span class="muted-text">Set an Anthropic API key to get AI-generated recommendations.</span>';
+    }
+    topResult.classList.remove('hidden');
+
+    // Assumptions
+    if (data.assumptions && data.assumptions.length) {
+        assumptionsList.innerHTML = data.assumptions
+            .map(a => '<li>' + a + '</li>')
+            .join('');
+        assumptionsSection.classList.remove('hidden');
+    }
+
+    // All matches table
+    resultsBody.innerHTML = data.sources.map(function(s) {
         var excerpt = s.chunk.length > 250 ? s.chunk.substring(0, 250) + '...' : s.chunk;
         var pct = (s.score * 100).toFixed(1) + '%';
         return '<tr><td><strong>' + s.source + '</strong></td><td>' + pct + '</td><td>' + excerpt + '</td></tr>';
     }).join('');
-    resultsTable.style.display = 'table';
+    matchesSection.classList.remove('hidden');
 }

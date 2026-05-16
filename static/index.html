@@ -89,17 +89,42 @@
                     <h2 class="panel-display">Results</h2>
                     <div class="dot-grid"></div>
                 </div>
-                <div id="answer-box"></div>
-                <table id="results-table">
-                    <thead>
-                        <tr>
-                            <th>SOURCE</th>
-                            <th>SCORE</th>
-                            <th>CONTENT EXCERPT</th>
-                        </tr>
-                    </thead>
-                    <tbody id="results-body"></tbody>
-                </table>
+
+                <div id="results-loading" class="results-loading hidden">SEARCHING...</div>
+                <div id="results-message" class="results-message hidden"></div>
+
+                <!-- Best match card -->
+                <div id="top-result" class="result-card hidden">
+                    <div class="result-card-header">
+                        <div class="result-card-meta">
+                            <span class="result-label">BEST MATCH</span>
+                            <span id="top-source-name" class="result-filename"></span>
+                        </div>
+                        <span id="top-source-score" class="result-score-badge"></span>
+                    </div>
+                    <div id="recommendation-text" class="result-recommendation"></div>
+                </div>
+
+                <!-- Assumptions -->
+                <div id="assumptions-section" class="assumptions-block hidden">
+                    <div class="section-eyebrow">ASSUMPTIONS</div>
+                    <ul id="assumptions-list"></ul>
+                </div>
+
+                <!-- All matches -->
+                <div id="matches-section" class="hidden">
+                    <div class="matches-label">ALL MATCHES</div>
+                    <table id="results-table">
+                        <thead>
+                            <tr>
+                                <th>SOURCE</th>
+                                <th>SCORE</th>
+                                <th>CONTENT EXCERPT</th>
+                            </tr>
+                        </thead>
+                        <tbody id="results-body"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 

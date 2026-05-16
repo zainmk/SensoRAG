@@ -43,7 +43,8 @@ def search():
 
     results = rag.retrieve(query)
     if not results:
-        return jsonify({'answer': 'No relevant results found. Attach datasheets or include sample data.', 'sources': []})
+        return jsonify({'recommendation': None, 'assumptions': [], 'sources': [],
+                        'message': 'No relevant results found. Attach datasheets or include sample data.'})
 
     return jsonify(rag.generate_answer(query, results, api_key=request.headers.get('X-API-Key')))
 

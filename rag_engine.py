@@ -73,30 +73,37 @@ class RAGEngine:
         return output
 
     def generate_answer(self, query, results, api_key=None):
+        import json
         context = "\n\n".join([f"[Source: {r['source']}]\n{r['chunk']}" for r in results])
         try:
             import anthropic
             client = anthropic.Anthropic(api_key=api_key) if api_key else anthropic.Anthropic()
             prompt = (
                 "You are a sensor selection assistant. Based on the following sensor datasheet excerpts, "
-                "answer the user's query. Reference specific technical specifications (precision, uncertainty, "
-                "tolerance, range, etc.) and name the source document for each recommendation.\n\n"
+                "answer the user's query.\n\n"
                 f"--- SENSOR DATASHEET EXCERPTS ---\n{context}\n\n"
                 f"--- USER QUERY ---\n{query}\n\n"
-                "Provide a concise, factual answer. Cite specific values from the datasheets."
+                "Respond with a JSON object containing exactly these two fields:\n"
+                "{\n"
+                '  "recommendation": "2-3 sentences explaining why the top-matching datasheet best answers the query. Reference specific technical values (range, precision, tolerance, etc.) from it.",\n'
+                '  "assumptions": ["short assumption 1", "short assumption 2"]\n'
+                "}\n"
+                "Include 2-4 assumptions about the use case. Return only valid JSON with no markdown fences."
             )
             response = client.messages.create(
                 model="claude-sonnet-4-6",
                 max_tokens=1024,
                 messages=[{"role": "user", "content": prompt}]
             )
-            return {'answer': response.content[0].text, 'sources': results}
+            parsed = json.loads(response.content[0].text.strip())
+            return {
+                'recommendation': parsed.get('recommendation', ''),
+                'assumptions': parsed.get('assumptions', []),
+                'sources': results
+            }
         except Exception:
             return {
-                'answer': (
-                    "**No API key configured** - showing raw retrieval matches below. "
-                    "Enter your Anthropic API key above, or set ANTHROPIC_API_KEY in .env "
-                    "for AI-generated answers."
-                ),
+                'recommendation': None,
+                'assumptions': [],
                 'sources': results
             }

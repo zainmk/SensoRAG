@@ -389,18 +389,144 @@ body {
 .doc-remove:hover { color: #b52828; }
 
 /* ================================================================
-   ANSWER BOX
+   RESULTS — LOADING / MESSAGE
 ================================================================ */
-#answer-box {
-    border: var(--border);
-    border-left: 5px solid var(--yellow);
+.results-loading {
+    font-family: var(--ff-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    padding: 0.25rem 0 1.25rem;
+    animation: blink 1.4s ease-in-out infinite;
+}
+
+.results-message {
+    font-family: var(--ff-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    padding: 0.25rem 0 1rem;
+}
+
+.muted-text { color: var(--muted); font-style: italic; }
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.2; }
+}
+
+/* ================================================================
+   RESULTS — BEST MATCH CARD
+================================================================ */
+.result-card {
     background: var(--white);
-    padding: 1rem 1.2rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    line-height: 1.75;
-    white-space: pre-wrap;
+    border: var(--border);
+    border-top: 4px solid var(--yellow);
+    margin-bottom: 0.75rem;
+}
+
+.result-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.8rem 1.2rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.result-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.result-label {
+    font-family: var(--ff-display);
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+}
+
+.result-filename {
+    font-family: var(--ff-display);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
     color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.result-score-badge {
+    background: var(--yellow);
+    border: var(--border);
+    font-family: var(--ff-display);
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 0.28rem 0.7rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.result-recommendation {
+    padding: 1rem 1.2rem;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--black);
+}
+
+/* ================================================================
+   RESULTS — ASSUMPTIONS
+================================================================ */
+.assumptions-block {
+    background: var(--white);
+    border: var(--border);
+    border-left: 4px solid var(--yellow);
+    padding: 0.85rem 1.2rem;
+    margin-bottom: 0.75rem;
+}
+
+.section-eyebrow {
+    font-family: var(--ff-display);
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    margin-bottom: 0.55rem;
+}
+
+.assumptions-block ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.assumptions-block li {
+    font-size: 0.84rem;
+    line-height: 1.55;
+    padding-left: 1.1rem;
+    position: relative;
+}
+
+.assumptions-block li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+    font-family: var(--ff-display);
+}
+
+/* ================================================================
+   RESULTS — ALL MATCHES
+================================================================ */
+.matches-label {
+    font-family: var(--ff-display);
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
 }
 
 /* ================================================================
