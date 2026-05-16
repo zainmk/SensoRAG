@@ -6,7 +6,7 @@ from werkzeug.utils import secure_filename
 from rag_engine import RAGEngine
 
 SAMPLES_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'samples')
-CHROMA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chroma_db')
+CHROMA_DIR = os.environ.get('CHROMA_DIR', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chroma_db'))
 ALLOWED_EXTENSIONS = {'pdf', 'txt', 'csv', 'tsv'}
 MAX_FILE_SIZE = 16 * 1024 * 1024  # 16 MB
 
