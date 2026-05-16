@@ -1,11 +1,3 @@
-// =======================================================
-// SensoRAG - Frontend Logic
-// =======================================================
-// Handles file uploads, queries, document management, and
-// the "bring your own API key" flow so users can provide
-// their own Anthropic key without the server operator paying.
-// =======================================================
-
 const fileInput      = document.getElementById('file-input');
 const uploadBtn      = document.getElementById('upload-btn');
 const uploadStatus   = document.getElementById('upload-status');
@@ -16,7 +8,6 @@ const answerBox      = document.getElementById('answer-box');
 const resultsSection = document.getElementById('results-section');
 const resultsTable   = document.getElementById('results-table');
 const resultsBody    = document.getElementById('results-body');
-const preloadBtn     = document.getElementById('preload-btn');
 const apiKeyInput    = document.getElementById('api-key-input');
 const apiKeyToggle   = document.getElementById('api-key-toggle');
 const apiKeyTrigger  = document.getElementById('api-key-trigger');
@@ -66,28 +57,6 @@ function getQueryHeaders() {
 }
 
 // -------------------------------------------------------
-// Preload Sample Datasheets
-// -------------------------------------------------------
-
-preloadBtn.addEventListener('click', async () => {
-    preloadBtn.disabled = true;
-    uploadStatus.textContent = 'Loading sample datasheets...';
-    try {
-        const res = await fetch('/preload', { method: 'POST' });
-        const data = await res.json();
-        if (res.ok) {
-            uploadStatus.innerHTML = '<span class="success">' + data.message + '</span>';
-            renderDocumentList(data.documents);
-        } else {
-            uploadStatus.innerHTML = '<span class="error">' + (data.error || 'Failed to load samples.') + '</span>';
-        }
-    } catch (err) {
-        uploadStatus.innerHTML = '<span class="error">Could not reach server: ' + err.message + '</span>';
-    }
-    preloadBtn.disabled = false;
-});
-
-// -------------------------------------------------------
 // Upload Handler
 // -------------------------------------------------------
 
@@ -118,24 +87,6 @@ uploadBtn.addEventListener('click', async () => {
     uploadBtn.disabled = false;
     fileInput.value = '';
 });
-
-// -------------------------------------------------------
-// Delete Document Handler
-// -------------------------------------------------------
-
-async function deleteDocument(filename) {
-    try {
-        const res = await fetch('/documents/' + encodeURIComponent(filename), { method: 'DELETE' });
-        const data = await res.json();
-        if (res.ok) {
-            renderDocumentList(data.documents);
-        } else {
-            uploadStatus.innerHTML = '<span class="error">' + (data.error || 'Failed to remove document.') + '</span>';
-        }
-    } catch (err) {
-        uploadStatus.innerHTML = '<span class="error">Delete failed: ' + err.message + '</span>';
-    }
-}
 
 // -------------------------------------------------------
 // Query Handler
@@ -179,10 +130,7 @@ function renderDocumentList(docs) {
         return;
     }
     documentList.innerHTML = docs.map(function(d) {
-        return '<span class="doc-tag">'
-            + d.filename + ' (' + d.chunks + ' chunks)'
-            + '<button class="doc-remove" title="Remove" onclick="deleteDocument(\'' + d.filename.replace(/'/g, "\\'") + '\')">&times;</button>'
-            + '</span>';
+        return '<span class="doc-tag">' + d.filename + ' (' + d.chunks + ' chunks)</span>';
     }).join('');
 }
 
