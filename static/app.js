@@ -72,7 +72,15 @@ async function runSearch() {
 
     try {
         const res = await fetch('/search', { method: 'POST', headers, body: formData });
-        const data = await res.json();
+        const text = await res.text();
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch {
+            answerBox.innerHTML = '<span class="error">Server error ' + res.status + ' — ' + res.statusText + '</span>';
+            searchBtn.disabled = false;
+            return;
+        }
         if (res.ok) {
             answerBox.textContent = data.answer || 'No answer generated.';
             renderResults(data.sources || []);
