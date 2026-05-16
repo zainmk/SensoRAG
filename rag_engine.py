@@ -1,5 +1,8 @@
 import io
+import os
 from pathlib import Path
+
+os.environ['HOME'] = '/tmp'
 
 import chromadb
 import pdfplumber
