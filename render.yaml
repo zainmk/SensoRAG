@@ -3,7 +3,7 @@ services:
     name: sensorag
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn server:app
+    startCommand: python server.py
     envVars:
       - key: ANTHROPIC_API_KEY
         sync: false        # set manually in Render dashboard

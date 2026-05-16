@@ -9,7 +9,6 @@
 # python-dotenv: loads environment variables from .env file (API keys)
 # -------------------------------------------------------
 flask
-gunicorn
 pdfplumber
 chromadb
 anthropic
