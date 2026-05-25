@@ -12,6 +12,12 @@ Flask, Python, FastEmbed, ChromaDB
 Makes use of the 'anthropic api key' that can be provided/stored on the frontend. Used to power the final LLM output response.
 Without any API key, the app still functions — it returns the raw retrieved chunks without LLM synthesis.
 
+# ex.
+
+
+https://github.com/user-attachments/assets/718609b1-643f-42df-94f0-c0b52753c1e7
+
+
 
 
 
