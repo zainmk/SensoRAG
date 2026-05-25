@@ -18,8 +18,3 @@ Without any API key, the app still functions — it returns the raw retrieved ch
 https://github.com/user-attachments/assets/718609b1-643f-42df-94f0-c0b52753c1e7
 
 
-
-
-
-### refs
-UI DESIGN [https://dribbble.com/shots/26816864-Nova-1-Identity]
