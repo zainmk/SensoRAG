@@ -1,4 +1,6 @@
-# [SensoRAG](https://senso-rag.vercel.app/)
+# SensoRAG
+
+https://senso-rag.vercel.app/
 
 RAG-based sensor/transducer selection tool. Upload sensor datasheets (PDF, TXT, CSV, TSV), then query with natural language to find the best components for your use case.
 
