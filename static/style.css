@@ -154,6 +154,13 @@ body {
     color: var(--muted);
     margin-bottom: 0.55rem;
 }
+.hint-link {
+    display: inline-block;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.12s;
+}
+.hint-link:hover { color: var(--black); }
 
 .api-key-area { display: flex; gap: 0.4rem; align-items: center; }
 .api-key-area input {
