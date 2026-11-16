@@ -1,5 +1,6 @@
 const fileInput          = document.getElementById('file-input');
 const samplesCheck       = document.getElementById('samples-check');
+const samplesList        = document.getElementById('samples-list');
 const searchBtn          = document.getElementById('search-btn');
 const queryInput         = document.getElementById('query-input');
 const resultsSection     = document.getElementById('results-section');
@@ -50,6 +51,62 @@ document.addEventListener('click', (e) => {
     if (!apiKeyPopover.contains(e.target) && e.target !== apiKeyTrigger) {
         apiKeyPopover.classList.add('hidden');
     }
+});
+
+// -------------------------------------------------------
+// Sample datasheet listing
+// -------------------------------------------------------
+
+let samplesCache = null;
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+}
+
+function formatSize(bytes) {
+    return bytes >= 1048576
+        ? (bytes / 1048576).toFixed(1) + ' MB'
+        : Math.max(1, Math.round(bytes / 1024)) + ' KB';
+}
+
+function renderSamples(files) {
+    if (!files.length) {
+        samplesList.innerHTML = '<div class="samples-empty">No sample datasheets found on the server.</div>';
+        return;
+    }
+    samplesList.innerHTML =
+        '<div class="section-eyebrow">SAMPLE DATASHEETS · ' + files.length +
+        ' FILE' + (files.length > 1 ? 'S' : '') + ' TO BE INGESTED</div>' +
+        '<ul class="samples-files">' + files.map(function (f) {
+            const about = f.about
+                ? '<span class="sample-about">' + escapeHtml(f.about) + '</span>'
+                : '';
+            return '<li><span class="sample-info">' +
+                   '<span class="sample-name">' + escapeHtml(f.name) + '</span>' + about +
+                   '</span><span class="sample-size">' + formatSize(f.size) + '</span></li>';
+        }).join('') + '</ul>';
+}
+
+async function showSamples() {
+    if (!samplesCache) {
+        try {
+            const res = await fetch('/samples');
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+            samplesCache = await res.json();
+        } catch (err) {
+            samplesList.innerHTML =
+                '<div class="samples-empty">Could not load sample list: ' + escapeHtml(err.message) + '</div>';
+            samplesList.classList.remove('hidden');
+            return;
+        }
+    }
+    renderSamples(samplesCache);
+    samplesList.classList.remove('hidden');
+}
+
+samplesCheck.addEventListener('change', () => {
+    if (samplesCheck.checked) showSamples();
+    else samplesList.classList.add('hidden');
 });
 
 // -------------------------------------------------------

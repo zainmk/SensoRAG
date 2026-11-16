@@ -1,5 +1,6 @@
 import io
 import os
+import uuid
 from pathlib import Path
 
 os.environ['HOME'] = '/tmp'
@@ -9,13 +10,29 @@ import pdfplumber
 
 
 class RAGEngine:
+    """Holds one search's chunks; use as a context manager so they are dropped after.
+
+    Every EphemeralClient in a process shares the same in-memory store, so each
+    engine needs its own uniquely named collection or searches would see (and
+    collide with) each other's chunks.
+    """
+
     def __init__(self):
         self.chroma_client = chromadb.EphemeralClient()
-        self.collection = self.chroma_client.get_or_create_collection(
-            name="sensor_chunks",
+        self.collection = self.chroma_client.create_collection(
+            name=f"sensor_chunks_{uuid.uuid4().hex}",
             metadata={"hnsw:space": "cosine"}
         )
         self._id_counter = 0
+
+    def close(self):
+        self.chroma_client.delete_collection(self.collection.name)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc_info):
+        self.close()
 
     def extract_text(self, file_bytes, filename):
         ext = Path(filename).suffix.lower()
@@ -31,6 +48,12 @@ class RAGEngine:
             return file_bytes.decode('utf-8', errors='ignore')
         return ""
 
+    # ChromaDB's default embedder (all-MiniLM-L6-v2) only reads the first 256
+    # tokens (~180 words of datasheet text) of each chunk, so with 300/75 about
+    # 23% of the text never reaches the search. Smaller chunks fix that but
+    # retrieve worse: on 14 test queries over samples/, 300/75 picked the right
+    # datasheet 9 times vs 7-8 for 200/100, 200/50 and 150/50 - short chunks of
+    # spec tables (e.g. "range: up to 1000 ft") outrank the actual match.
     def chunk_text(self, text, chunk_size=300, overlap=75):
         words = text.split()
         chunks = []

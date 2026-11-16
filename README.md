@@ -14,8 +14,8 @@ RAG (Retrieval Augmented Generation) tools can be used to directly relate LLM an
 ### Stack
 - Flask; to host the application in a full framework
 - Python; Used as general language and interpereting environment
-- FastEmbed; An efficient compression method to quickly embed the search vectors - to compare against contextual vectors
-- ChromaDB: Database designed specifically to hold vector embeddings, for purposes such as these. Once the data sheets are ingested, they are stored here.
+- all-MiniLM-L6-v2; ChromaDB's built-in embedding model, run locally with ONNX Runtime. Converts each datasheet chunk and the query into a 384-number vector, so they can be compared by meaning rather than exact keywords
+- ChromaDB: Database designed specifically to hold vector embeddings, for purposes such as these. Each search loads the data sheets into a temporary in-memory collection, finds the chunks closest to the query, then discards them.
 
 ### Anthropic API Key
 Makes use of the 'Anthropic API key' that can be provided/stored on the frontend. Used to power the final LLM output response.
